@@ -1,0 +1,14 @@
+Trigger EventTrigger on Event (after insert,after update, after delete, after undelete) {
+    EventTriggerHandller handler = new EventTriggerHandller();
+    if(Trigger.isDelete){
+        handler.OnAfterDelete(trigger.new,trigger.old,Trigger.newMap,trigger.oldMap);
+    }else if(Trigger.isInsert ){
+        handler.OnAfterInsert(trigger.new,trigger.old,Trigger.newMap,trigger.oldMap);
+    
+    }else if(Trigger.isUndelete){
+        handler.OnAfterUndelete(trigger.new,trigger.old,Trigger.newMap,trigger.oldMap);
+    
+    } else if(Trigger.isUpdate){
+        handler.OnAfterUpdate(trigger.new,trigger.old,Trigger.newMap,trigger.oldMap);
+    }
+}

@@ -1,0 +1,26 @@
+public class Validator{
+    
+	public Static void checAddress (String StreetAddressId) {
+      //  Map <Id,String> StreetAddressId = new Map <Id,String>();
+        
+       // Set<Id> accIds = new Set<Id>();
+        
+        Boolean result = false;
+        String AddRessRegex = '^[a-zA-Z-]+ ([0-9]+\\-?[a-z]{0,10})';
+       
+          StreetAddressId = 'Brivibas street 211';
+       	 // Boolean result = Boolean.valueOf(StreetAddressId);
+       
+            
+            Pattern MyPattern = Pattern.compile(AddRessRegex);
+        	Matcher MyMatcher = MyPattern.matcher(StreetAddressId);
+        
+       	 if(MyMatcher.matches())
+   		 {
+        result = true;
+    }
+        System.debug('aaaaaa====>>>  '+result);
+   // return result;
+        
+}
+}

@@ -1,0 +1,69 @@
+@isTest
+private class TestActivityTriggerHandler {
+    @isTest
+    static void testMethodOne() {
+        Account acc = new Account();
+        acc.Name='Test Account' ;
+        insert acc;
+  
+        Task t = new Task();
+        t.Subject = 'Call';
+        t.Status = 'In Progress';
+        t.whatId= acc.id;
+        insert t;
+        
+            
+        Account accNew = [select Id, Open_Tasks__c from Account where Id =: acc.Id LIMIT 1];
+        
+        System.assertEquals(1, accNew.Open_Tasks__c);
+        
+        Account acc2 = new Account();        
+        acc2.Name = 'Update Account';
+       
+        insert acc2;
+        
+        t.whatId= acc2.id;
+        update t;
+        
+        Account acc2New = [select Id, Open_Tasks__c from Account where Id =: acc2.Id LIMIT 1];
+        
+        System.assertEquals(1, acc2New.Open_Tasks__c);
+        
+
+        
+        Account acc3 = new Account();        
+        acc3.Name = 'Delete Account';
+       
+        insert acc3;
+        
+        t.whatId= acc3.id;
+        update t;
+        delete t;
+        
+        Account acc3New = [select Id, Open_Tasks__c from Account where Id =: acc3.Id LIMIT 1];
+        
+        System.assertEquals(1, acc3New.Open_Tasks__c);
+        
+        
+        
+      /*  Account acc4 = new Account();        
+        acc4.Name = 'unDelete Account';
+       
+        insert acc4;
+        
+        Task t2 = new Task();
+        t2.Subject = 'Call';
+        t2.whatId= acc.id;
+        insert t2;
+        delete t2;
+        undelete t2;
+
+
+        Account acc4New = [select Id, Open_Tasks__c from Account where Id =: acc4.Id LIMIT 1];
+        Task tasks = [Select whatid from task where Id =: t2.whatid ALL ROWS];
+        
+        System.assertEquals(acc4New.id, tasks.whatid);*/
+       
+
+    }
+}

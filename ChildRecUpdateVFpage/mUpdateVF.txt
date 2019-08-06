@@ -1,0 +1,57 @@
+<apex:page standardController="Account" extensions="MassUpdateController">
+<apex:form id="myform">
+
+<apex:pageBlock mode="inlineEdit" title="Account Details" id="accounts_details"> 
+    <apex:pageBlockSection >
+       
+            <apex:outputField value="{! Account.Name }"/>
+            <apex:outputField value="{! Account.Phone }"/>
+
+            </apex:pageBlockSection>          
+                </apex:pageBlock>
+                
+         <apex:pageBlock mode="inlineEdit" title="Related Contacts"> 
+    
+         <apex:pageBlockButtons location="top">
+         <apex:outputPanel id="myButtons">
+
+         <apex:commandButton action="{!customSave}" title="Save Changes" value="Save Changes"/>
+         <apex:commandButton action="{!cancel}" title="Cancel" value="Cancel" immediate="true"/>
+         <apex:commandButton action="{!Beginning}" title="Beginning" value="<<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>
+         <apex:commandButton action="{!Previous}" title="Previous" value="<" disabled="{!disablePrevious}" reRender="myPanel,myButtons"/>        
+         <apex:commandButton action="{!Next}" title="Next" value=">" disabled="{!disableNext}" reRender="myPanel,myButtons"/>
+         <apex:commandButton action="{!End}" title="End" value=">>" disabled="{!disableNext}" reRender="myPanel,myButtons"/> 
+         
+         </apex:outputPanel>
+         </apex:pageBlockButtons>
+         
+    
+         <apex:inlineEditSupport event="ondblclick"/>
+         <apex:outputPanel id="myPanel">
+         
+         <apex:pageblockTable value="{!contacts}" var="c">
+         
+         
+           <apex:column headervalue="Name">
+           <apex:outputfield value="{!c.Name}"/>
+           </apex:column>
+           <apex:column headervalue="Title">
+           <apex:outputfield value="{!c.Title}"/>
+           </apex:column>
+           <apex:column headervalue="Email">
+           <apex:outputfield value="{!c.Email}"/>
+           </apex:column> 
+           <apex:column headervalue="Email Opt Out">
+           <apex:outputfield value="{!c.HasOptedOutOfEmail}"/>
+           </apex:column>         
+           <apex:column headervalue="Birthdate">
+           <apex:outputfield value="{!c.Birthdate}"/>
+           </apex:column>
+           <apex:facet name="footer">Showing Page # {!pageNumber} of {!totalPages}</apex:facet>
+         </apex:pageblockTable>
+         
+         </apex:outputPanel>
+
+    </apex:pageBlock>
+</apex:form> 
+</apex:page>

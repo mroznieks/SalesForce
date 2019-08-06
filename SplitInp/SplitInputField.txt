@@ -1,0 +1,66 @@
+Trigger SplitBillingAdress on Account (before insert, before update) {
+
+		For(Account a: Trigger.new) {
+
+             if (a.BillingStreet != null) {
+                 
+
+                 if (Trigger.isInsert) {
+                   // Validator.checAddress(a.BillingStreet);
+                   
+                   String AddRessRegex = '^[a-zA-Z-]+ ([0-9]+\\-?[a-z]{0,10})';
+                
+                    Pattern MyPattern = Pattern.compile(AddRessRegex);
+        			Matcher MyMatcher = MyPattern.matcher(a.BillingStreet);
+                     System.debug('###matches : '+MyMatcher.matches());
+                     if(!MyMatcher.matches()){
+                         a.BillingStreet.addError('Please follow this adress format:(Example: Brivibas-Street 211)');
+   
+                     }
+                     else{
+                     
+				
+  				a.Street_NAME__c = a.BillingStreet.split(' ')[0];
+		
+                try{
+  				a.Street_NUMBER__c = a.BillingStreet.split(' ')[1];
+                }
+                catch(ListException e){
+                    System.debug('aaaaaaaa  ' +e);
+       		
+				}
+                     }
+                 }
+        
+                 if (Trigger.isUpdate){ 
+                     
+                     String AddRessRegex = '^[a-zA-Z-]+ ([0-9]+\\-?[a-z]{0,10})';
+                        Pattern MyPattern = Pattern.compile(AddRessRegex);
+                        Matcher MyMatcher = MyPattern.matcher(a.BillingStreet);
+                         
+                     
+                    if(!MyMatcher.matches()){
+                        a.BillingStreet.addError('Please follow this adress format:(Example: Brivibas-Street 211)');
+   
+                     } 
+                     
+       	  		  a.Street_NAME__c = a.BillingStreet.split(' ')[0];
+                try{
+  				  a.Street_NUMBER__c = a.BillingStreet.split(' ')[1];  
+				   }
+                catch(ListException e){  
+                    System.debug('aaaaaaaa  ' +e);
+
+				}
+            
+             }
+            
+           //  else if (!a.BillingStreet.contains(',')) {
+   				
+            //      a.BillingStreet.addError('You need to seperate streets number from streets name with ","(Example: Brivibas Street, 211)');
+  				//}
+             }
+		}
+
+            
+}

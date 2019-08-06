@@ -1,0 +1,74 @@
+@isTest
+private class TestEventTriggerHandller {
+    @isTest
+    static void testMethodOne() {
+        Account acc = new Account();
+        acc.Name='Test Account' ;
+        insert acc;
+  
+        Event eve = new Event();
+        eve.Subject = 'Test';
+        eve.DurationInMinutes = 30;
+        eve.ActivityDateTime = System.now();
+        eve.whatId= acc.id;
+        insert eve;
+        
+            
+        Account accNew = [select Id, Open_Events__c from Account where Id =: acc.Id LIMIT 1];
+        
+        System.assertEquals(1, accNew.Open_Events__c);
+        
+        Account acc2 = new Account();        
+        acc2.Name = 'Update Account';
+       
+        insert acc2;
+        
+        eve.whatId= acc2.id;
+        update eve;
+        
+        Account acc2New = [select Id, Open_Events__c from Account where Id =: acc2.Id LIMIT 1];
+        
+        System.assertEquals(1, acc2New.Open_Events__c);
+        
+        
+        
+        Account acc3 = new Account();        
+        acc3.Name = 'Delete Account';
+       
+        insert acc3;
+        
+        eve.whatId= acc3.id;
+        //update eve;
+        delete eve;
+        
+        Account acc3New = [select Id, Open_Events__c from Account where Id =: acc3.Id LIMIT 1];
+        
+        System.assertEquals(1, acc3New.Open_Events__c);
+ 
+        
+      /*  Account acc4 = new Account();        
+        acc4.Name = 'unDelete Account';
+       
+        insert acc4;
+        System.assertEquals(null,acc4.Open_Events__c);
+        
+        Event e = new Event();
+        e.Subject = 'Email';
+        e.whatId= acc4.id;
+        insert e;
+        acc4 = [select Id, Open_Events__c from Account where Id =: acc4.Id LIMIT 1];
+        System.assertEquals(1,acc4.Open_Events__c);
+   
+        delete e;
+        acc4 = [select Id, Open_Events__c from Account where Id =: acc4.Id LIMIT 1];
+        System.assertEquals(0,acc4.Open_Events__c);
+        undelete e;
+        
+        
+       // Event ee = [SELECT Whatid, Subject From Event WHERE Whatid=: e.WhatId];
+        
+        //System.assertEquals(acc4.id, ee.subject);*/
+       
+
+    }
+}

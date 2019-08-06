@@ -1,0 +1,91 @@
+public class ActivityTriggerHandler {
+    
+
+    //After Insert
+    public void OnAfterInsert( List<Task> newTask, List<Task> oldTask, Map<ID, Task> newTaskMap , Map<ID, Task> oldTaskMap ) {
+		Set<Id> accountIds = new Set<Id>();
+        
+        for(Task t : newTask){
+			accountIds.add(t.WhatId);
+		}	
+		updateCount(accountIds);
+        System.debug('<<<<OnAfterInsert WORKED>>>>' +accountIds );
+    }
+
+    
+
+    //After Update
+    public void OnAfterUpdate( List<Task> newTask, List<Task> oldTask, Map<ID, Task> newTaskMap , Map<ID, Task> oldTaskMap ) {
+		Set<Id> accountIds = new Set<Id>();
+        for(Task t : newTask) {
+            if(t.WhatId != oldTaskMap.get(t.Id).WhatId) {
+                accountIds.add(t.WhatId);
+                accountIds.add(oldTaskMap.get(t.Id).WhatId);
+            }
+           if(t.Status == 'Completed' && t.Status != oldTaskMap.get(t.Id).Status) { 
+               accountIds.add(t.WhatId);
+               accountIds.add(oldTaskMap.get(t.Id).WhatId);
+            } 
+               updateCount(accountIds);
+             if(t.Status != 'Completed' && oldTaskMap.get(t.Id).Status=='Completed') {
+                 accountIds.add(t.WhatId);
+                 accountIds.add(oldTaskMap.get(t.Id).WhatId);
+             } 
+        }    
+		updateCount(accountIds);
+        System.debug('<<<<OnAfterUpdate WORKED>>>>' +accountIds );
+    
+    }
+    
+	//After Delete
+    public void OnAfterDelete( List<Task> newTask, List<Task> oldTask, Map<ID, Task> newTaskMap , Map<ID, Task> oldTaskMap ) {
+		Set<Id> accountIds = new Set<Id>();
+        for(Task t : oldTask ){
+            accountIds.add(t.WhatId);
+		}	
+		updateCount(accountIds);
+        System.debug('<<<<OnAfterDelete WORKED>>>>' +accountIds );
+    }
+    
+    //After Undelete
+    public void OnAfterUndelete( List<Task> newTask, List<Task> oldTask, Map<ID, Task> newTaskMap , Map<ID, Task> oldTaskMap ) {
+		Set<Id> accountIds = new Set<Id>();
+        for(Task t : newTask){
+			accountIds.add(t.WhatId);
+		}	
+		updateCount(accountIds);
+        System.debug('<<<<OnAfterUndelete WORKED>>>>' +accountIds );
+    }
+	
+	
+	public static void updateCount( Set<Id> accountIds ) {
+        //integer eventCount = 0 ;
+	
+		if(accountIds.size() > 0) {
+			List<Account> accountWithTasksList = [SELECT Open_Tasks__c, (SELECT Id, Status FROM Tasks WHERE Status != 'Completed')//,(SELECT Id FROM Events) 
+                                         FROM Account WHERE Id in: accountIds];
+            System.debug('<<<<accountWithTasksList HERE>>>>--->>> '+accountWithTasksList );
+            
+            //List<aggregateResult> EventsListsCount = [select count(id) from Event where Whatid in:accountIds];
+
+           // for (AggregateResult ar : EventsListsCount )  {
+  			 
+   			// eventCount = (Integer)ar.get('expr0');
+             //   System.debug('<<<<EventsLists COUNT HERE>>>>--->>> '+eventCount);
+   
+
+            
+      
+			if(accountWithTasksList.size()  > 0) {
+				for(Account acc : accountWithTasksList)
+				{
+					acc.Open_Tasks__c = acc.Tasks.size();// + eventCount;
+                 
+				}	
+				
+			}
+            Update accountWithTasksList;
+                System.debug('<<<<accountList HERE>>>>--->>> '+accountWithTasksList );
+		}
+    }
+}

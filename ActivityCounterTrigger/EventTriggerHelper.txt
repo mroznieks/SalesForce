@@ -1,0 +1,79 @@
+public with sharing class EventTriggerHandller {
+    
+
+    //After Insert
+    public void OnAfterInsert( List<Event> newEvent, List<Event> oldEvent, Map<ID, Event> newEventMap , Map<ID, Event> oldEventMap ) {
+		Set<Id> accIds = new Set<Id>();
+        
+        for(Event e : newEvent){
+			accIds.add(e.WhatId);
+		}	
+		updateCount(accIds);
+        System.debug('<<<<OnAfterInsert WORKED>>>>' +accIds );
+    }
+
+    //After Undelete
+    public void OnAfterUndelete( List<Event> newEvent, List<Event> oldEvent, Map<ID, Event> newEventMap , Map<ID, Event> oldEventMap ) {
+		Set<Id> accIds = new Set<Id>();
+        for(Event e : newEvent){
+			accIds.add(e.WhatId);
+		}	
+		updateCount(accIds);
+        System.debug('<<<<OnAfterUndelete WORKED>>>>' +accIds );
+    }
+
+    //After Update
+    public void OnAfterUpdate( List<Event> newEvent, List<Event> oldEvent, Map<ID, Event> newEventMap , Map<ID, Event> oldEventMap ) {
+		Set<Id> accIds = new Set<Id>();
+        for(Event e : newEvent) {
+            if(e.WhatId != oldEventMap.get(e.Id).WhatId) {
+                accIds.add(e.WhatId);
+                accIds.add(oldEventMap.get(e.Id).WhatId);
+            }
+        }
+        updateCount(accIds);
+        System.debug('<<<<OnAfterUpdate WORKED>>>>' +accIds );
+    }
+
+    
+	//After Delete
+    public void OnAfterDelete( List<Event> newEvent, List<Event> oldEvent, Map<ID, Event> newEventMap , Map<ID, Event> oldEventMap ) {
+		Set<Id> accIds = new Set<Id>();
+        for(Event e : oldEvent ){
+            accIds.add(e.WhatId);
+		}	
+		updateCount(accIds);
+        System.debug('<<<<OnAfterDelete WORKED>>>>' +accIds );
+    }
+	
+	
+	public static void updateCount( Set<Id> accIds ) {
+       // integer taskCount = 0 ; 
+        //integer eventCount = 0 ; 
+	
+		if(accIds.size() > 0) {
+			List<Account> accountList = [SELECT Open_Events__c, (SELECT Id FROM Events) 
+                                         FROM Account WHERE Id in: accIds];
+            System.debug('<<<<accountList COUNT HERE>>>>--->>> '+accountList);
+            
+           // List<aggregateResult> TasksListsCount = [select count(id) from Task WHERE Status != 'Completed' AND Whatid in:accIds];
+           
+            
+//            for (AggregateResult ar : TasksListsCount )  {
+  			 
+   			// taskCount = (Integer)ar.get('expr0');
+             //   System.debug('<<<<EventsLists COUNT HERE>>>>--->>> '+taskCount);
+   
+            
+			if(accountList.size() > 0){
+				for(Account acc : accountList)
+				{
+					acc.Open_Events__c = acc.Events.size();// + taskCount;
+				}	
+				UPDATE accountList;
+                System.debug('<<<<accountList HERE>>>>--->>> '+accountList );
+			}
+		}
+    }	
+	
+}
